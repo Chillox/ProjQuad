@@ -1,5 +1,5 @@
 
-#include <FreeSixIMU.h> //Link to library http://bildr.org/2012/03/stable-orientation-digital-imu-6dof-arduino/
+#include <FreeSixIMU.h> //Bibilioteket är modifierad, se längst ned
 #include <FIMU_ADXL345.h>
 #include <FIMU_ITG3200.h>
 #include <math.h>
@@ -147,3 +147,23 @@ void megunoOutput(double compPitch, float sixDOFPitch, float offset)
 	yprPlot.SendData("offset", offset);
 }
 
+
+/* //Added functions in the FreeSixIMU.cpp file
+void FreeSixIMU::getAccG(float * values) {
+	float accval[3];
+	acc.get_Gxyz(accval);
+	values[0] = ((float) accval[0]);
+	values[1] = ((float) accval[1]);
+	values[2] = ((float) accval[2]);
+}
+
+void FreeSixIMU::getGyroRate(float * values)
+{
+	gyro.readGyro(&values[0], &values[1], &values[2]);
+}
+*/
+
+/* Added the 2 functions in the FreeSixIMU.h header file. Public functions
+	void getAccG(float * values);
+	void getGyroRate(float * values);
+*/
