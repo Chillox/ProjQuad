@@ -163,7 +163,7 @@ void FreeSixIMU::getGyroRate(float * values)
 }
 */
 
-/* Added the 2 functions in the FreeSixIMU.h header file. Public functions
+/* //Added the 2 functions in the FreeSixIMU.h header file. Public functions
 	void getAccG(float * values);
 	void getGyroRate(float * values);
 */
