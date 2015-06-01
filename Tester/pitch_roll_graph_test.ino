@@ -1,10 +1,10 @@
 
-#include <FreeSixIMU.h>
+#include <FreeSixIMU.h> //Link to library http://bildr.org/2012/03/stable-orientation-digital-imu-6dof-arduino/
 #include <FIMU_ADXL345.h>
 #include <FIMU_ITG3200.h>
 #include <math.h>
 #include <Wire.h>
-#include "MegunoLink.h"
+#include "MegunoLink.h" //Need the software megunoLink PRO to work and the library
 
 #define gxGain 1
 #define gyGain 1
@@ -44,7 +44,6 @@ void setup() {
 }
 
 void loop() {
-	
 	sixDOF.getYawPitchRoll(ypr);
 	calcAngle(anglesAcc, anglesGyro);
 	float pitch = ypr[1] - yprOffset[1];
@@ -119,15 +118,26 @@ void getYPRoffset()
 	float yprSum[3];
 	float _ypr[3];
 	for (int i = 0; i < 1000; i++)
-  {
-    sixDOF.getYawPitchRoll(_ypr); /
-    yprSum[0] += _ypr[0];
-    yprSum[1] += _ypr[1]; 
-	yprSum[2] += _ypr[2];	
-  }
-  yprOffset[0] = yprSum[0]/1000;
-  yprOffset[1] = yprSum[1]/1000;
-  yprOffset[2] = yprSum[2]/1000;
+  	{
+    	sixDOF.getYawPitchRoll(_ypr); /
+    	yprSum[0] += _ypr[0];
+    	yprSum[1] += _ypr[1]; 
+		yprSum[2] += _ypr[2];	
+  	}
+  	
+  	for(int i = 0; i < 4000; i++){ //Getting a accurate reading of the angles after 2000 samples at start
+		sixDOF.getYawPitchRoll(_ypr);
+		if(i >= 2000)
+		{
+			yprSum[0] += _ypr[0];
+    		yprSum[1] += _ypr[1]; 
+			yprSum[2] += _ypr[2];
+		}
+	}
+  	
+  yprOffset[0] = yprSum[0]/2000;
+  yprOffset[1] = yprSum[1]/2000;
+  yprOffset[2] = yprSum[2]/2000;
 }
 
 void megunoOutput(double compPitch, float sixDOFPitch, float offset)
