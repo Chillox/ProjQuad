@@ -1,3 +1,4 @@
+//Declarations.h är gruppens egna bibliotek , resterande är ej egna
 #include <PinChangeInt.h>
 #include <Servo.h>
 #include <FreeSixIMU.h>
@@ -34,6 +35,7 @@ void loop()
 	static uint16_t unThrottleIn, unPITCHIn, unYawIn, unRollIn, bUpdateFlags;
 	getAngles();
 	
+//Se källa: http://rcarduino.blogspot.co.uk/2012/04/how-to-read-multiple-rc-channels-draft.html
 	if(bUpdateFlagsShared)
 		readInterrupts(&unThrottleIn, &unPITCHIn, &unYawIn, &unRollIn, &bUpdateFlags); 
 	
@@ -41,6 +43,7 @@ void loop()
 	changeSP(unPITCHIn,PIDpitch,974,1750,1340); //Manövrering av pitch axel
 	//mapController(unPITCHIn,unRollIn);
 	
+//Se källa  http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/
 	calcPID(PIDpitch,&errSum[PITCH],&lastTime[PITCH]); //pitch
 	calcPID(PIDroll,&errSum[ROLL],&lastTime[ROLL]); //roll
 	//calcPID(PIDyaw,&errSum[YAW],&lastTime[YAW]); //yaw
@@ -51,6 +54,7 @@ void loop()
 	ledAngle(PIDpitch[INPUT],PIDroll[INPUT]);
 }
 
+//Se källa: http://rcarduino.blogspot.co.uk/2012/04/how-to-read-multiple-rc-channels-draft.html
 void readInterrupts(uint16_t * unThrottleIn, uint16_t * unPITCHIn, uint16_t * unYawIn, uint16_t * unRollIn, uint16_t * bUpdateFlags) // we have local copies of the PID_INPUTs, so now we can turn interrupts back on
 {
 	noInterrupts();
@@ -95,6 +99,7 @@ void mapController(int _pitch, int _roll)
 	   PIDpitch[SP] = 0;
 }
 
+//Se källa http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/
 void calcPID(float * PIDaxis, double * errSum, unsigned long * lastTime)
 {
 	unsigned long now = millis();
@@ -113,6 +118,9 @@ void calcPID(float * PIDaxis, double * errSum, unsigned long * lastTime)
 	}
 }
 
+//Se källor http://en.wikipedia.org/wiki/Helicopter_flight_controls
+// http://theboredengineers.com/2012/05/the-quadcopter-basics/
+// http://robotics.stackexchange.com/questions/1838/how-yaw-pitch-and-roll-effect-the-flight-of-quadcopter
 void calcVelocity(int throttle)
 {
 	int frontThr, backThr, rightThr, leftThr;
@@ -126,11 +134,6 @@ void calcVelocity(int throttle)
 
 	sendToESC(frontThr, backThr, rightThr ,leftThr); //output to motors
 	//printOut(throttle,PIDyaw[INPUT],PIDpitch[INPUT],PIDroll[INPUT],frontThr,backThr,rightThr,leftThr,PIDyaw[PID_OUTPUT],PIDpitch[PID_OUTPUT],PIDroll[PID_OUTPUT]);
-}
-
-int controllerOutput(int pitch, int yaw)
-{
-	return pitch - yaw;
 }
 
 void sendToESC(int front, int back, int right, int left) //int right, int left
@@ -254,6 +257,7 @@ void initMotors()
 	mLeft.attach(escPin4);
 }
 
+//Se källa http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/
 void setTunings(float* _Kp, float* _Ki, float* _Kd)
 {
    float SampleTimeInSec = (float)SampleTime/1000;
@@ -295,6 +299,7 @@ void offset()
 }
 
 //------------------------ ISR ROUTINES ---------------------------------
+//Se källa http://rcarduino.blogspot.co.uk/2012/04/how-to-read-multiple-rc-channels-draft.html
 void calcThrottle() //Simple interrupt service routine
 {
   if(digitalRead(THROTTLE_IN_PIN) == HIGH)
